@@ -1,7 +1,7 @@
 oVirt Image Template
 ====================
 
-The `ovirt-image-template` role creates a template from external image. Currently the disk can be an image in Glance external provider or QCOW2 image.
+The `oVirt.image-template` role creates a template from external image. Currently the disk can be an image in Glance external provider or QCOW2 image.
 
 Requirements
 ------------
@@ -63,7 +63,7 @@ Example Playbook
     template_disk_storage: mydata
 
   roles:
-    - ovirt-image-template
+    - oVirt.image-template
 
 
 - name: Create a template from a disk stored in glance
