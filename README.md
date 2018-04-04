@@ -22,6 +22,8 @@ Role Variables
 | template_cluster   | Default               | Name of the cluster where template must be created. |
 | template_name      | mytemplate            | Name of the template. |
 | template_memory    | 2GiB                  | Amount of memory assigned to the template. |
+| template_memory_guaranteed    | UNDEF      | Amount of minimal guaranteed memory of the Virtual Machine |
+| template_memory_max    | UNDEF             | Upper bound of virtual machine memory up to which memory hot-plug can be performed. |
 | template_cpu       | 1                     | Number of CPUs assigned to the template.  |
 | template_disk_storage | UNDEF              | Name of the data storage domain where the disk must be created. If not specified, the data storage domain is selected automatically. |
 | template_disk_size | 10GiB                 | The size of the template disk.  |
@@ -30,6 +32,7 @@ Role Variables
 | template_disk_interface | virtio           | Interface of the template disk. |
 | template_timeout   | 600                   | Amount of time to wait for the template to be created. |
 | template_nics      | {name: nic1, profile_name: ovirtmgmt, interface: virtio} | List of dictionaries that specify the NICs of template. |
+| template_operating_system | UNDEF | Operating system of the template like: other, rhel_7x64, debian_7, see others in ovirt_template module. |
 | glance_image_provider        | UNDEF            | Name of the glance image provider.                    |
 | glance_image            | UNDEF               | This parameter specifies the name of disk in glance provider to be imported as template. |
 

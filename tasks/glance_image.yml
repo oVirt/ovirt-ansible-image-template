@@ -36,6 +36,10 @@
       image_disk: "{{ glance_image }}"
       storage_domain: "{{ template_disk_storage | default(disk_storage_domain.name) }}"
       cluster: "{{ template_cluster }}"
+      operating_system: "{{ template_operating_system | default(omit) }}"
+      memory: "{{ template_memory | default(omit) }}"
+      memory_guaranteed: "{{ template_memory_guaranteed | default(omit) }}"
+      memory_max: "{{ template_memory_max | default(omit) }}"
 
   always:
     - name: Logout from oVirt

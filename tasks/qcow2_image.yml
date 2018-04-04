@@ -82,7 +82,9 @@
       name: "{{ vm_name }}"
       state: stopped
       cluster: "{{ template_cluster }}"
-      memory: "{{ template_memory }}"
+      memory: "{{ template_memory | default(omit) }}"
+      memory_guaranteed: "{{ template_memory_guaranteed | default(omit) }}"
+      memory_max: "{{ template_memory_max | default(omit) }}"
       cpu_cores: "{{ template_cpu }}"
       operating_system: "{{ template_operating_system }}"
       type: server
@@ -114,7 +116,7 @@
     when:
       - (template_disk_size | regex_replace('GiB') | int) > (qcow2_size | regex_replace('GiB') | int)
       - ovirt_templates | length == 0
-  
+
   - name: Create template
     ovirt_templates:
       auth: "{{ ovirt_auth }}"
