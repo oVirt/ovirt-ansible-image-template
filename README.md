@@ -31,7 +31,7 @@ Role Variables
 | template_disk_format | UNDEF               | Format of the template disk.  |
 | template_disk_interface | virtio           | Interface of the template disk. |
 | template_timeout   | 600                   | Amount of time to wait for the template to be created. |
-| template_type      | UNDEF                 | Allows to set the type of the template: desktop, server or high_performance (for qcow2 based templates only) |
+| template_type      | UNDEF                 | The type of the template: desktop, server or high_performance (for qcow2 based templates only) |
 | template_nics      | {name: nic1, profile_name: ovirtmgmt, interface: virtio} | List of dictionaries that specify the NICs of template. |
 | template_operating_system | UNDEF | Operating system of the template like: other, rhel_7x64, debian_7, see others in ovirt_template module. |
 | glance_image_provider        | UNDEF            | Name of the glance image provider.                    |
