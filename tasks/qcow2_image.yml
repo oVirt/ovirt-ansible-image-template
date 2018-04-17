@@ -87,7 +87,7 @@
       memory_max: "{{ template_memory_max | default(omit) }}"
       cpu_cores: "{{ template_cpu }}"
       operating_system: "{{ template_operating_system }}"
-      type: server
+      type: "{{ template_type | default(omit) }}"
       disks:
         - id: "{{ ovirt_disk.id }}"
           bootable: true
