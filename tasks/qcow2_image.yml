@@ -4,12 +4,13 @@
     url: "{{ qcow_url }}"
     dest: "{{ image_path }}"
     force: "{{ not image_cache_download }}"
-  register: downloaded
+    checksum: "{{ image_checksum | default(omit) }}"
+  register: downloaded_file
   tags:
     - ovirt-template-image
 
 - name: Check file type
-  command: "/usr/bin/file {{ image_path | quote }}"
+  command: "/usr/bin/file {{ downloaded_file.dest | quote }}"
   changed_when: false
   register: filetype
   tags:
@@ -24,7 +25,7 @@
 
 - name: Calculate image size in GiB
   set_fact:
-    qcow2_size: "{{ filetype.stdout_lines[0].split()[5] | int // 2**30 }}GiB"
+    qcow2_size: "{{ (filetype.stdout_lines[0].split()[5] | int / 2**30) | round(0, 'ceil') | int }}GiB"
 
 - block:
   - name: Login to oVirt
@@ -68,7 +69,7 @@
       name: "{{ template_disk_name | default(template_name) }}"
       size: "{{ qcow2_size }}"
       format: "{{ template_disk_format | default(omit) }}"
-      image_path: "{{ image_path }}"
+      image_path: "{{ downloaded_file.dest }}"
       storage_domain: "{{ template_disk_storage | default(disk_storage_domain.name) }}"
       force: "{{ ovirt_templates | length == 0 }}"
     register: ovirt_disk
@@ -130,7 +131,7 @@
   always:
     - name: Remove downloaded image
       file:
-        path: "{{ image_path }}"
+        path: "{{ downloaded_file.dest }}"
         state: absent
       when:  not image_cache_download
 

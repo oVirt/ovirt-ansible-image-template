@@ -17,7 +17,8 @@ Role Variables
 | Name               | Default value         |                            |
 |--------------------|-----------------------|----------------------------|
 | qcow_url           | UNDEF                 | The URL of the QCOW2 image. |
-| image_path         | /tmp/ovirt_image_data | Path where the QCOW2 image will be downloaded to. |
+| image_path         | /tmp/                 | Path where the QCOW2 image will be downloaded to. If directory the base name of the URL on the remote server will be used. |
+| image_checksum     | UNDEF                 | If a checksum is defined, the digest of the destination file will be calculated after it is downloaded to ensure its integrity and verify that the transfer completed successfully. Format: <algorithm>:<checksum>, e.g. checksum="sha256:D98291AC[...]B6DC7B97". |
 | image_cache_download | true                | When set to false will delete image_path at the start and end of execution |
 | template_cluster   | Default               | Name of the cluster where template must be created. |
 | template_name      | mytemplate            | Name of the template. |
