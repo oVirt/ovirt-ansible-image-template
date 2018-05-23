@@ -1,4 +1,9 @@
 ---
+- name: Check if template is correct
+  fail:
+    msg: "'templates' variable does not contain mandatory parameters 'qcow_url"
+  when: "qcow_url is undefined"
+
 - name: Download the qcow image
   get_url:
     url: "{{ qcow_url }}"

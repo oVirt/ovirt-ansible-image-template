@@ -1,5 +1,12 @@
 ---
 - block:
+  - name: Check if template is correct
+    fail:
+      msg: "'templates' variable does not contain mandatory parameters '{{item}}"
+    when: "{{item}} is undefined"
+    with_items:
+      - [glance_image_provider, glance_image]
+
   - name: Login to oVirt
     ovirt_auth:
       url: "{{ engine_url | default(omit) }}"
