@@ -38,6 +38,8 @@ Role Variables
 | glance_image_provider        | UNDEF (mandatory)            | Name of the glance image provider.                    |
 | glance_image            | UNDEF (mandatory)               | This parameter specifies the name of disk in glance provider to be imported as template. |
 
+You need to use qcow_url or glance_image_provider, glance_image.
+
 Dependencies
 ------------
 
