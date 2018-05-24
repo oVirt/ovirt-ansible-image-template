@@ -16,7 +16,7 @@ Role Variables
 
 | Name               | Default value         |                            |
 |--------------------|-----------------------|----------------------------|
-| qcow_url           | UNDEF (mandatory)                | The URL of the QCOW2 image. |
+| qcow_url           | UNDEF (mandatory if glance is not used)                | The URL of the QCOW2 image. |
 | image_path         | /tmp/                 | Path where the QCOW2 image will be downloaded to. If directory the base name of the URL on the remote server will be used. |
 | image_checksum     | UNDEF                 | If a checksum is defined, the digest of the destination file will be calculated after it is downloaded to ensure its integrity and verify that the transfer completed successfully. Format: <algorithm>:<checksum>, e.g. checksum="sha256:D98291AC[...]B6DC7B97". |
 | image_cache_download | true                | When set to false will delete image_path at the start and end of execution |
@@ -35,10 +35,9 @@ Role Variables
 | template_type      | UNDEF                 | The type of the template: desktop, server or high_performance (for qcow2 based templates only) |
 | template_nics      | {name: nic1, profile_name: ovirtmgmt, interface: virtio} | List of dictionaries that specify the NICs of template. |
 | template_operating_system | UNDEF | Operating system of the template like: other, rhel_7x64, debian_7, see others in ovirt_template module. |
-| glance_image_provider        | UNDEF (mandatory)            | Name of the glance image provider.                    |
-| glance_image            | UNDEF (mandatory)               | This parameter specifies the name of disk in glance provider to be imported as template. |
+| glance_image_provider        | UNDEF (mandatory if qcow_url is not used)            | Name of the glance image provider.                    |
+| glance_image            | UNDEF (mandatory if qcow_url is not used)               | This parameter specifies the name of disk in glance provider to be imported as template. |
 
-You need to use qcow_url or glance_image_provider, glance_image.
 
 Dependencies
 ------------
