@@ -1,7 +1,7 @@
 ---
 - name: Check if template is correct
   fail:
-    msg: "'templates' variable does not contain mandatory parameters 'qcow_url"
+    msg: "mandatory parameter 'qcow_url' is not defined"
   when: "qcow_url is undefined"
 
 - name: Download the qcow image
