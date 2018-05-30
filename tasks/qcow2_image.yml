@@ -4,10 +4,15 @@
     msg: "mandatory parameter 'qcow_url' is not defined"
   when: "qcow_url is undefined"
 
+- name: Check if {{ image_path }} is directory
+  stat:
+    path: "{{ image_path }}"
+  register: image_path_st
+
 - name: Download the qcow image
   get_url:
     url: "{{ qcow_url }}"
-    dest: "{{ image_path }}"
+    dest: "{{ image_path_st.stat.isdir | ternary(image_path~'/'~qcow_url.rpartition('/')[-1], image_path) | regex_replace('//', '/') }}"
     force: "{{ not image_cache_download }}"
     checksum: "{{ image_checksum | default(omit) }}"
   register: downloaded_file
@@ -40,14 +45,20 @@
       password: "{{ engine_password | default(omit) }}"
       ca_file: "{{ engine_cafile | default(omit) }}"
       insecure: "{{ engine_insecure | default(true) }}"
-    when: ovirt_auth is undefined
+    when: ovirt_auth is undefined or not ovirt_auth
     register: loggedin
     tags:
       - always
 
+  - name: Fetch the datacenter name
+    ovirt_datacenter_facts:
+      auth: "{{ ovirt_auth }}"
+      pattern: "Clusters.name = {{ template_cluster }}"
+
   - name: Fetch storages
     ovirt_storage_domains_facts:
       auth: "{{ ovirt_auth }}"
+      pattern: "datacenter={{ ovirt_datacenters[0].name }}"
     when: template_disk_storage is undefined
     tags:
       - ovirt-template-image
@@ -64,7 +75,7 @@
   - name: Check if template already exists
     ovirt_templates_facts:
       auth: "{{ ovirt_auth }}"
-      pattern: "name={{ template_name }}"
+      pattern: "name={{ template_name }} and datacenter={{ ovirt_datacenters[0].name }}"
     tags:
       - ovirt-template-image
 

@@ -1,2 +1,2 @@
 ---
-vm_name: temporary_vm_name_12367123
+vm_name: "temporary_vm_name_{{ 99999 | random | string }}"

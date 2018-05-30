@@ -1,5 +1,5 @@
 ---
-image_path: /tmp/
+image_path: /tmp
 image_cache_download: true
 template_cluster: Default
 template_name: mytemplate
