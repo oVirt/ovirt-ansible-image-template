@@ -50,6 +50,11 @@ sh build.sh install
 %license LICENSE
 
 %changelog
+* Thu May 31 2018 Ondra Machacek <omachace@redhat.com> - 1.1.7-1
+- Support to upload same template name to different datacenters.
+- Add checking mandatory variables logic.
+- Add parameters for os and memory.
+
 * Tue Apr 10 2018 Ondra Machacek <omachace@redhat.com> - 1.1.6-1
 - Require Ansible 2.5.
 
