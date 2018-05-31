@@ -139,6 +139,7 @@
       auth: "{{ ovirt_auth }}"
       name: "{{ template_name }}"
       vm: "{{ vm_name }}"
+      cluster: "{{ template_cluster }}"
       timeout: "{{ template_timeout }}"
     when: ovirt_templates | length == 0
     tags:
@@ -149,7 +150,7 @@
       file:
         path: "{{ downloaded_file.dest }}"
         state: absent
-      when:  not image_cache_download
+      when: not image_cache_download
 
     - name: Remove vm
       ovirt_vms:
