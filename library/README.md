@@ -12,3 +12,7 @@ Here is list of updated modules:
 - Previously we searched by name, but it's not enough as template could have
   same names in different clusters, so we improve the search to search also
   by cluster name. [PR](https://github.com/ansible/ansible/pull/40934)
+
+2. ovirt_auth.py
+
+ - Support to pass hostname to ovirt_auth module. [PR](https://github.com/ansible/ansible/pull/40610)
