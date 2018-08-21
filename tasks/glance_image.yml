@@ -33,13 +33,14 @@
         - ovirt-template-image
 
     - name: Import templates from glance
-      ovirt_templates:
+      ovirt_templates_27:
         auth: "{{ ovirt_auth }}"
         state: imported
         name: "{{ template_name }}"
         template_image_disk_name: "{{ template_disk_name | default(omit) }}"
         image_provider: "{{ glance_image_provider }}"
         image_disk: "{{ glance_image }}"
+        io_threads: "{{ template_io_threads ) | default(omit) }}"
         storage_domain: "{{ template_disk_storage | default(disk_storage_domain.name) }}"
         cluster: "{{ template_cluster }}"
         operating_system: "{{ template_operating_system | default(omit) }}"

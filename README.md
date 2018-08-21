@@ -27,6 +27,7 @@ Role Variables
 | image_checksum     | UNDEF                 | If a checksum is defined, the digest of the destination file will be calculated after it is downloaded to ensure its integrity and verify that the transfer completed successfully. Format: <algorithm>:<checksum>, e.g. checksum="sha256:D98291AC[...]B6DC7B97". |
 | image_cache_download | true                | When set to false will delete image_path at the start and end of execution |
 | template_cluster   | Default               | Name of the cluster where template must be created. |
+| template_io_threads| UNDEF                 | Number of IO threads used by template. 0 means IO threading disabled.  (Added in ansible 2.7)|
 | template_name      | mytemplate            | Name of the template. |
 | template_memory    | 2GiB                  | Amount of memory assigned to the template. |
 | template_memory_guaranteed    | UNDEF      | Amount of minimal guaranteed memory of the Virtual Machine |
