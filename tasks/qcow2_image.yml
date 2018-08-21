@@ -100,7 +100,7 @@
         name: "{{ vm_name }}"
         state: stopped
         cluster: "{{ template_cluster }}"
-        io_threads: "{{ template_io_threads ) | default(omit) }}"
+        io_threads: "{{ template_io_threads | default(omit) }}"
         memory: "{{ template_memory | default(omit) }}"
         memory_guaranteed: "{{ template_memory_guaranteed | default(omit) }}"
         memory_max: "{{ template_memory_max | default(omit) }}"
