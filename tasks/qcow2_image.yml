@@ -94,27 +94,70 @@
       tags:
         - ovirt-template-image
 
-    - name: Create vm
-      ovirt_vms:
-        auth: "{{ ovirt_auth }}"
-        name: "{{ vm_name }}"
-        state: stopped
-        cluster: "{{ template_cluster }}"
-        io_threads: "{{ template_io_threads | default(omit) }}"
-        memory: "{{ template_memory | default(omit) }}"
-        memory_guaranteed: "{{ template_memory_guaranteed | default(omit) }}"
-        memory_max: "{{ template_memory_max | default(omit) }}"
-        cpu_cores: "{{ template_cpu }}"
-        operating_system: "{{ template_operating_system }}"
-        type: "{{ template_type | default(omit) }}"
-        disks:
-          - id: "{{ ovirt_disk.id }}"
-            bootable: true
-            interface: "{{ template_disk_interface }}"
-        nics: "{{ template_nics }}"
+    - block:
+      - name: Generate SSH keys
+        command: "ssh-keygen -t rsa -f {{ tmp_private_key_file }} -N ''"
+        args:
+          creates: "{{ tmp_private_key_file }}"
+        when: template_prerequisites_tasks is defined
+
+      - name: Create vm
+        ovirt_vms:
+          auth: "{{ ovirt_auth }}"
+          name: "{{ vm_name }}"
+          state: "{{ 'running' if template_prerequisites_tasks is defined else 'stopped' }}"
+          cluster: "{{ template_cluster }}"
+          io_threads: "{{ template_io_threads | default(omit) }}"
+          memory: "{{ template_memory | default(omit) }}"
+          memory_guaranteed: "{{ template_memory_guaranteed | default(omit) }}"
+          memory_max: "{{ template_memory_max | default(omit) }}"
+          cpu_cores: "{{ template_cpu }}"
+          operating_system: "{{ template_operating_system }}"
+          type: "{{ template_type | default(omit) }}"
+          cloud_init: "{{ {'user_name': 'root', 'authorized_ssh_keys': lookup('file', tmp_private_key_file~'.pub')} if template_prerequisites_tasks is defined else omit }}"
+          disks:
+            - id: "{{ ovirt_disk.id }}"
+              bootable: true
+              interface: "{{ template_disk_interface }}"
+          nics: "{{ template_nics }}"
+
+      - block:
+        - name: Wait for VMs IPv4
+          ovirt_vms_facts:
+            auth: "{{ ovirt_auth }}"
+            pattern: "name={{ vm_name }}"
+            fetch_nested: true
+            nested_attributes: ips
+          until: "ovirt_vms | ovirtvmipv4 | length > 0"
+          retries: 10
+          delay: 5
+
+        - name: Include prerequisites tasks for VM
+          import_tasks: "{{ template_prerequisites_tasks if template_prerequisites_tasks is defined else 'empty.yml' }}"
+          static: no
+          delegate_to: "{{ ovirt_vms | ovirtvmipv4 }}"
+          vars:
+            ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+            ansible_user: root
+            ansible_ssh_private_key_file: "{{ tmp_private_key_file | default(omit) }}"
+
+        - name: Remove SSH keys
+          file:
+            state: absent
+            path: "{{ item }}"
+          with_items:
+            - "{{ tmp_private_key_file }}"
+            - "{{ tmp_private_key_file }}.pub"
+
+        - name: Stop vm
+          ovirt_vms:
+            auth: "{{ ovirt_auth }}"
+            name: "{{ vm_name }}"
+            state: stopped
+
+        when: template_prerequisites_tasks is defined
+
       when: ovirt_templates | length == 0
-      tags:
-        - ovirt-template-image
 
     - block:
         - name: Resize disk if smaller than template_disk_size
@@ -143,6 +186,7 @@
         vm: "{{ vm_name }}"
         cluster: "{{ template_cluster }}"
         timeout: "{{ template_timeout }}"
+        seal: true
       when: ovirt_templates | length == 0
       tags:
         - ovirt-template-image
