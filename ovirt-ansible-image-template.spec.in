@@ -50,6 +50,13 @@ sh build.sh install
 %license LICENSE
 
 %changelog
+* Tue Sep 18 2018 Ondra Machacek <omachace@redhat.com> - 1.1.8-1
+- Allow execute ansible on vm before template. gh#25
+- Add parameter io_threads for template. gh#23
+- Document that dry mode is unsupported. gh#22
+- Support to pass hostname as well as URL. gh#21
+- Support AWX credentials. gh#18
+
 * Thu May 31 2018 Ondra Machacek <omachace@redhat.com> - 1.1.7-1
 - Support to upload same template name to different datacenters.
 - Add checking mandatory variables logic.
