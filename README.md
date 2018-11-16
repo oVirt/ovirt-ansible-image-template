@@ -1,7 +1,25 @@
 oVirt Image Template
 ====================
 
-The `oVirt.image-template` role creates a template from external image. Currently the disk can be an image in Glance external provider or QCOW2 image.
+The `ovirt.image-template` role creates a template from external image. Currently the disk can be an image in Glance external provider or QCOW2 image.
+
+Note
+----
+Please note that when installing this role from Ansible Galaxy you are instructed to run following command:
+
+```bash
+$ ansible-galaxy install ovirt.image-template
+```
+
+This will download the role to the directory with the same name as you specified on the
+command line, in this case `ovirt.image-template`. But note that it is case sensitive, so if you specify
+for example `OVIRT.image-template` it will download the same role, but it will add it to the directory named
+`OVIRT.image-template`, so you later always have to use this role with upper case prefix. So be careful how
+you specify the name of the role on command line.
+
+For the RPM installation we install three legacy names `ovirt.image-template`, `ovirt.image-template` and `ovirt-image-template`.
+So you can use any of this name. This documentation and examples in this repository are using name `ovirt.image-template`.
+`ovirt.image-template` and `ovirt-image-template` role names are deprecated.
 
 Requirements
 ------------
@@ -76,7 +94,7 @@ Example Playbook
     template_disk_storage: mydata
 
   roles:
-    - oVirt.image-template
+    - ovirt.image-template
 
 
 - name: Create a template from a disk stored in glance
