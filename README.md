@@ -17,9 +17,9 @@ for example `OVIRT.image-template` it will download the same role, but it will a
 `OVIRT.image-template`, so you later always have to use this role with upper case prefix. So be careful how
 you specify the name of the role on command line.
 
-For the RPM installation we install three legacy names `ovirt.image-template`, `ovirt.image-template` and `ovirt-image-template`.
-So you can use any of this name. This documentation and examples in this repository are using name `ovirt.image-template`.
-`ovirt.image-template` and `ovirt-image-template` role names are deprecated.
+For the RPM installation we install three legacy names `oVirt.image-template`, `ovirt.image-template` and `ovirt-image-template`.
+So you can use any of these names. This documentation and examples in this repository are using name `ovirt.image-template`.
+`oVirt.image-template` and `ovirt-image-template` role names are deprecated.
 
 Requirements
 ------------
