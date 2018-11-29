@@ -6,7 +6,7 @@
       when: "glance_image_provider is undefined or glance_image is undefined"
 
     - name: Login to oVirt
-      ovirt_auth_26:
+      ovirt_auth:
         url: "{{ engine_url | default(lookup('env','OVIRT_URL')) | default(omit) }}"
         hostname: "{{ engine_fqdn | default(lookup('env','OVIRT_HOSTNAME')) | default(omit) }}"
         username: "{{ engine_user | default(lookup('env','OVIRT_USERNAME')) | default(omit) }}"
@@ -19,7 +19,7 @@
         - always
 
     - name: Fetch storages
-      ovirt_storage_domains_facts:
+      ovirt_storage_domain_facts:
         auth: "{{ ovirt_auth }}"
       tags:
         - ovirt-template-image
@@ -33,7 +33,7 @@
         - ovirt-template-image
 
     - name: Import templates from glance
-      ovirt_templates_27:
+      ovirt_template:
         auth: "{{ ovirt_auth }}"
         state: imported
         name: "{{ template_name }}"
