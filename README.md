@@ -80,7 +80,7 @@ Example Playbook
   gather_facts: false
 
   vars:
-    engine_url: https://ovirt-engine.example.com/ovirt-engine/api
+    engine_fqdn: ovirt-engine.example.com
     engine_user: admin@internal
     engine_password: 123456
     engine_cafile: /etc/pki/ovirt-engine/ca.pem
@@ -103,7 +103,7 @@ Example Playbook
   gather_facts: false
 
   vars:
-    engine_url: https://ovirt-engine.example.com/ovirt-engine/api
+    engine_fqdn: ovirt-engine.example.com
     engine_user: admin@internal
     engine_password: 123456
     engine_cafile: /etc/pki/ovirt-engine/ca.pem
