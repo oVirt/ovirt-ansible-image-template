@@ -24,7 +24,7 @@ So you can use any of these names. This documentation and examples in this repos
 Requirements
 ------------
 
- * Ansible version 2.5 or higher.
+ * Ansible version 2.7 or higher.
  * Python SDK version 4.2 or higher.
  * oVirt has to be 4.1 or higher and [ovirt-imageio] must be installed and running.
  * CA certificate of oVirt engine. The path to CA certificate must be specified in the `ovirt_ca` variable.
