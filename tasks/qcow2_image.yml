@@ -94,6 +94,16 @@
       tags:
         - ovirt-template-image
 
+    - name: Wait until the qcow image is unlocked by the oVirt engine
+      ovirt_disk_facts:
+        auth: "{{ ovirt_auth }}"
+        pattern: "id={{ ovirt_disk.id }}"
+      until: (ovirt_disks is defined) and (ovirt_disks[0].status != "locked")
+      retries: 10
+      delay: 3
+      tags:
+        - ovirt-template-image
+
     - block:
       - name: Generate SSH keys
         command: "ssh-keygen -t rsa -f {{ tmp_private_key_file }} -N ''"
