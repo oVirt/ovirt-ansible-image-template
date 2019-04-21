@@ -13,5 +13,6 @@ template_nics:
   - name: nic1
     profile_name: ovirtmgmt
     interface: virtio
+template_seal: true
 
 disk_storage_domain: null

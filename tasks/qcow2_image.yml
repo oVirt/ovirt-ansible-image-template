@@ -196,7 +196,7 @@
         vm: "{{ vm_name }}"
         cluster: "{{ template_cluster }}"
         timeout: "{{ template_timeout }}"
-        seal: true
+        seal: "{{ template_seal }}"
       when: ovirt_templates | length == 0
       tags:
         - ovirt-template-image
