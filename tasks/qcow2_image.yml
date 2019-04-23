@@ -101,6 +101,7 @@
       until: (ovirt_disks is defined) and (ovirt_disks[0].status != "locked")
       retries: 10
       delay: 3
+      when: ovirt_templates | length == 0
       tags:
         - ovirt-template-image
 
