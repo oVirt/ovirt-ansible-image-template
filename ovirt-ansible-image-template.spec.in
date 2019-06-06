@@ -60,6 +60,11 @@ sh build.sh install
 %license LICENSE
 
 %changelog
+* Thu Jun 6 2019 Ondra Machacek <omachace@redhat.com> - 1.1.10-1
+- Wait until the qcow image is unlocked by the oVirt engine.
+- Add template_seal variable.
+- Don't use filter in delegate_to.
+
 * Thu Nov 29 2018 Ondra Machacek <omachace@redhat.com> - 1.1.9-1
 - Support ovirt.image-template name.
 - Require Ansible 2.7.2.
