@@ -60,6 +60,9 @@ sh build.sh install
 %license LICENSE
 
 %changelog
+* Tue Jun 18 2019 Ondra Machacek <omachace@redhat.com> - 1.1.11-1
+- Update filter_plugin, to be synced with other roles.
+
 * Thu Jun 6 2019 Ondra Machacek <omachace@redhat.com> - 1.1.10-1
 - Wait until the qcow image is unlocked by the oVirt engine.
 - Add template_seal variable.
