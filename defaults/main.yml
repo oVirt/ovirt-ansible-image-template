@@ -15,4 +15,5 @@ template_nics:
     interface: virtio
 template_seal: true
 
+disk_resize_timeout: 60
 disk_storage_domain: null

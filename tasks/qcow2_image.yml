@@ -188,8 +188,8 @@
             auth: "{{ ovirt_auth }}"
           register: resized_disk
           until: resized_disk.disk.provisioned_size != ovirt_disk.disk.provisioned_size
-          retries: 30
-          delay: 2
+          retries: "{{ (disk_resize_timeout / 3) | int }}"
+          delay: 3
       when:
         - (template_disk_size | regex_replace('GiB') | int) > (qcow2_size | regex_replace('GiB') | int)
         - ovirt_templates | length == 0
