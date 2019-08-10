@@ -1,6 +1,7 @@
 ---
 image_path: /tmp
 image_cache_download: true
+image_download_timeout: 180
 template_cluster: Default
 template_name: mytemplate
 template_memory: 2GiB

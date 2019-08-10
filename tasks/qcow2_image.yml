@@ -15,6 +15,7 @@
     dest: "{{ image_path_st.stat.isdir | ternary(image_path~'/'~qcow_url.rpartition('/')[-1], image_path) | regex_replace('//', '/') }}"
     force: "{{ not image_cache_download }}"
     checksum: "{{ image_checksum | default(omit) }}"
+    timeout: "{{ image_download_timeout }}"
   register: downloaded_file
   tags:
     - ovirt-template-image
