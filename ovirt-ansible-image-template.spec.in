@@ -60,6 +60,10 @@ sh build.sh install
 %license LICENSE
 
 %changelog
+* Tue Aug 27 2019 Ondra Machacek <omachace@redhat.com> - 1.1.12-1
+- Add disk_resize_timeout.
+- Allow to specify timeout for QCOW2 image download.
+
 * Tue Jun 18 2019 Ondra Machacek <omachace@redhat.com> - 1.1.11-1
 - Update filter_plugin, to be synced with other roles.
 
