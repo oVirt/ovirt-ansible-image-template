@@ -1,9 +1,9 @@
 #!/bin/bash
 
 
-VERSION="1.1.12"
-MILESTONE=
-RPM_RELEASE="1"
+VERSION="1.1.13"
+MILESTONE=master
+RPM_RELEASE="0.1.$MILESTONE.$(date -u +%Y%m%d%H%M%S)"
 
 ROLE_NAME="ovirt.image-template"
 PACKAGE_NAME="ovirt-ansible-image-template"
