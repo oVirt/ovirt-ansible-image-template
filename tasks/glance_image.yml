@@ -19,14 +19,15 @@
         - always
 
     - name: Fetch storages
-      ovirt_storage_domain_facts:
+      ovirt_storage_domain_info:
         auth: "{{ ovirt_auth }}"
+      register: sd_info
       tags:
         - ovirt-template-image
 
     - name: Find data domain
       set_fact:
-        disk_storage_domain: "{{ ovirt_storage_domains|json_query(the_query)|list|first}}"
+        disk_storage_domain: "{{ sd_info.ovirt_storage_domains|json_query(the_query)|list|first }}"
       vars:
         the_query: "[?type=='data']"
       tags:
