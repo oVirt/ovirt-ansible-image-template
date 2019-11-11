@@ -102,7 +102,8 @@
       ovirt_disk_info:
         auth: "{{ ovirt_auth }}"
         pattern: "id={{ ovirt_disk.id }}"
-      until: (ovirt_disks is defined) and (ovirt_disks[0].status != "locked")
+      register: disk_info
+      until: ((ovirt_disk is defined) and (ovirt_disk.disk.status != "locked")) or ((disk_info is defined) and (disk_info.ovirt_disks[0].status != "locked"))
       retries: 20
       delay: 3
       when: template_info.ovirt_templates | length == 0
@@ -131,7 +132,7 @@
           type: "{{ template_type | default(omit) }}"
           cloud_init: "{{ {'user_name': 'root', 'authorized_ssh_keys': lookup('file', tmp_private_key_file~'.pub')} if template_prerequisites_tasks is defined else omit }}"
           disks:
-            - id: "{{ ovirt_disk.id }}"
+            - id: "{{ disk_info.ovirt_disks[0].id }}"
               bootable: true
               interface: "{{ template_disk_interface }}"
           nics: "{{ template_nics }}"
@@ -182,17 +183,17 @@
     - block:
         - name: Resize disk if smaller than template_disk_size
           ovirt_disk:
-            id: "{{ ovirt_disk.id }}"
+            id: "{{ disk_info.ovirt_disks[0].id }}"
             vm_name: "{{ vm_name }}"
             auth: "{{ ovirt_auth }}"
             size: "{{ template_disk_size }}"
 
         - name: Wait for resize
           ovirt_disk:
-            id: "{{ ovirt_disk.id }}"
+            id: "{{ disk_info.ovirt_disks[0].id }}"
             auth: "{{ ovirt_auth }}"
           register: resized_disk
-          until: resized_disk.disk.provisioned_size != ovirt_disk.disk.provisioned_size
+          until: resized_disk.disk.provisioned_size != disk_info.ovirt_disks[0].provisioned_size
           retries: "{{ (disk_resize_timeout / 3) | int }}"
           delay: 3
       when:
