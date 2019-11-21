@@ -53,21 +53,23 @@
         - always
 
     - name: Fetch the datacenter name
-      ovirt_datacenter_facts:
+      ovirt_datacenter_info:
         auth: "{{ ovirt_auth }}"
         pattern: "Clusters.name = {{ template_cluster }}"
+      register: dc_info
 
     - name: Fetch storages
-      ovirt_storage_domain_facts:
+      ovirt_storage_domain_info:
         auth: "{{ ovirt_auth }}"
-        pattern: "datacenter={{ ovirt_datacenters[0].name }}"
+        pattern: "datacenter={{ dc_info.ovirt_datacenters[0].name }}"
+      register: sd_info
       when: template_disk_storage is undefined
       tags:
         - ovirt-template-image
 
     - name: Find data domain
       set_fact:
-        disk_storage_domain: "{{ ovirt_storage_domains|json_query(the_query)|list|first}}"
+        disk_storage_domain: "{{ sd_info.ovirt_storage_domains|json_query(the_query)|list|first }}"
       when: template_disk_storage is undefined
       vars:
         the_query: "[?type=='data']"
@@ -75,9 +77,10 @@
         - ovirt-template-image
 
     - name: Check if template already exists
-      ovirt_template_facts:
+      ovirt_template_info:
         auth: "{{ ovirt_auth }}"
-        pattern: "name={{ template_name }} and datacenter={{ ovirt_datacenters[0].name }}"
+        pattern: "name={{ template_name }} and datacenter={{ dc_info.ovirt_datacenters[0].name }}"
+      register: template_info
       tags:
         - ovirt-template-image
 
@@ -89,20 +92,21 @@
         format: "{{ template_disk_format | default(omit) }}"
         image_path: "{{ downloaded_file.dest }}"
         storage_domain: "{{ template_disk_storage | default(disk_storage_domain.name) }}"
-        force: "{{ ovirt_templates | length == 0 }}"
+        force: "{{ template_info.ovirt_templates | length == 0 }}"
       register: ovirt_disk
-      when: ovirt_templates | length == 0
+      when: template_info.ovirt_templates | length == 0
       tags:
         - ovirt-template-image
 
     - name: Wait until the qcow image is unlocked by the oVirt engine
-      ovirt_disk_facts:
+      ovirt_disk_info:
         auth: "{{ ovirt_auth }}"
         pattern: "id={{ ovirt_disk.id }}"
-      until: (ovirt_disks is defined) and (ovirt_disks[0].status != "locked")
-      retries: 10
+      register: disk_info
+      until: ((ovirt_disk is defined) and (ovirt_disk.disk.status != "locked")) or ((disk_info is defined) and (disk_info.ovirt_disks[0].status != "locked"))
+      retries: 20
       delay: 3
-      when: ovirt_templates | length == 0
+      when: template_info.ovirt_templates | length == 0
       tags:
         - ovirt-template-image
 
@@ -128,25 +132,26 @@
           type: "{{ template_type | default(omit) }}"
           cloud_init: "{{ {'user_name': 'root', 'authorized_ssh_keys': lookup('file', tmp_private_key_file~'.pub')} if template_prerequisites_tasks is defined else omit }}"
           disks:
-            - id: "{{ ovirt_disk.id }}"
+            - id: "{{ disk_info.ovirt_disks[0].id }}"
               bootable: true
               interface: "{{ template_disk_interface }}"
           nics: "{{ template_nics }}"
 
       - block:
         - name: Wait for VMs IPv4
-          ovirt_vm_facts:
+          ovirt_vm_info:
             auth: "{{ ovirt_auth }}"
             pattern: "name={{ vm_name }}"
             fetch_nested: true
             nested_attributes: ips
-          until: "ovirt_vms | ovirtvmipv4 | length > 0"
+          register: vm_info
+          until: "vm_info.ovirt_vms | ovirtvmipv4 | length > 0"
           retries: 10
           delay: 5
 
         - name: Set Ip of the VM
           set_fact:
-            vm_ip: "{{ ovirt_vms | ovirtvmipv4 }}"
+            vm_ip: "{{ vm_info.ovirt_vms | ovirtvmipv4 }}"
 
         - name: Include prerequisites tasks for VM
           import_tasks: "{{ template_prerequisites_tasks if template_prerequisites_tasks is defined else 'empty.yml' }}"
@@ -173,27 +178,27 @@
 
         when: template_prerequisites_tasks is defined
 
-      when: ovirt_templates | length == 0
+      when: template_info.ovirt_templates | length == 0
 
     - block:
         - name: Resize disk if smaller than template_disk_size
           ovirt_disk:
-            id: "{{ ovirt_disk.id }}"
+            id: "{{ disk_info.ovirt_disks[0].id }}"
             vm_name: "{{ vm_name }}"
             auth: "{{ ovirt_auth }}"
             size: "{{ template_disk_size }}"
 
         - name: Wait for resize
           ovirt_disk:
-            id: "{{ ovirt_disk.id }}"
+            id: "{{ disk_info.ovirt_disks[0].id }}"
             auth: "{{ ovirt_auth }}"
           register: resized_disk
-          until: resized_disk.disk.provisioned_size != ovirt_disk.disk.provisioned_size
+          until: resized_disk.disk.provisioned_size != disk_info.ovirt_disks[0].provisioned_size
           retries: "{{ (disk_resize_timeout / 3) | int }}"
           delay: 3
       when:
         - (template_disk_size | regex_replace('GiB') | int) > (qcow2_size | regex_replace('GiB') | int)
-        - ovirt_templates | length == 0
+        - template_info.ovirt_templates | length == 0
 
     - name: Create template
       ovirt_template:
@@ -203,7 +208,7 @@
         cluster: "{{ template_cluster }}"
         timeout: "{{ template_timeout }}"
         seal: "{{ template_seal }}"
-      when: ovirt_templates | length == 0
+      when: template_info.ovirt_templates | length == 0
       tags:
         - ovirt-template-image
 
@@ -219,7 +224,7 @@
         auth: "{{ ovirt_auth }}"
         state: absent
         name: "{{ vm_name }}"
-      when: ovirt_templates | length == 0
+      when: template_info.ovirt_templates | length == 0
       tags:
         - ovirt-template-image
 
