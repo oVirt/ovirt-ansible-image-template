@@ -60,6 +60,9 @@ sh build.sh install
 %license LICENSE
 
 %changelog
+* Mon Nov 25 2019 Martin Necas <mnecas@redhat.com> - 1.2.0-1
+- Bump ansible to version 2.9.0.
+
 * Tue Aug 27 2019 Ondra Machacek <omachace@redhat.com> - 1.1.12-1
 - Add disk_resize_timeout.
 - Allow to specify timeout for QCOW2 image download.
