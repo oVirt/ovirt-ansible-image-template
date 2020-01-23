@@ -16,6 +16,8 @@
     force: "{{ not image_cache_download }}"
     checksum: "{{ image_checksum | default(omit) }}"
     timeout: "{{ image_download_timeout }}"
+    client_cert: "{{ qcow_url_client_cert | default(omit) }}"
+    client_key: "{{ qcow_curl_client_key | default(omit) }}"
   register: downloaded_file
   tags:
     - ovirt-template-image
