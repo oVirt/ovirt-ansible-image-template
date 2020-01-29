@@ -1,3 +1,4 @@
 yum-utils
 git
 ansible
+file
