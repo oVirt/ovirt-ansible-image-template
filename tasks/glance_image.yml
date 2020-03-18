@@ -48,6 +48,7 @@
         memory: "{{ template_memory | default(omit) }}"
         memory_guaranteed: "{{ template_memory_guaranteed | default(omit) }}"
         memory_max: "{{ template_memory_max | default(omit) }}"
+        timeout: "{{ template_timeout }}"
 
   always:
     - name: Logout from oVirt
