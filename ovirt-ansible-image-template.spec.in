@@ -60,6 +60,12 @@ sh build.sh install
 %license LICENSE
 
 %changelog
+* Fri Mar 20 2020 Martin Necas <mnecas@redhat.com> - 1.2.2-1
+- Add template disks.
+- Add file dependency.
+- Add template timeout for import template.
+- Add qcow_url_client_cert and qcow_url_client_key.
+
 * Mon Dec 2 2019 Martin Necas <mnecas@redhat.com> - 1.2.1-1
 - Add build for el8.
 
