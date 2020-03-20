@@ -139,6 +139,19 @@
               interface: "{{ template_disk_interface }}"
           nics: "{{ template_nics }}"
 
+      - name: Manage disks
+        ovirt_disk:
+          auth: "{{ ovirt_auth }}"
+          name: "{{ item.name | default(omit) }}"
+          size: "{{ item.size | default(omit) }}"
+          interface: "{{ item.interface | default(template_disk_interface) | default(omit) }}"
+          vm_name: "{{ vm_name }}"
+          format: "{{ item.format | default(template_disk_format) | default(omit) }}"
+          storage_domain: "{{ item.storage_domain | default(template_disk_storage) | default(omit) }}"
+          bootable: "{{ item.bootable | default(omit) }}"
+          wait: true
+        loop: "{{ template_disks }}"
+
       - block:
         - name: Wait for VMs IPv4
           ovirt_vm_info:
