@@ -41,8 +41,8 @@ Role Variables
 
 | Name               | Default value         |                            |
 |--------------------|-----------------------|----------------------------|
-| qcow_url           | UNDEF (mandatory if glance is not used)                | The URL of the QCOW2 image. |
-| qcow_url_client_cert | UNDEF               | Path to client certificate if needed for retrieving QCOW from authenticated site. | 
+| qcow_url           | UNDEF (mandatory if glance is not used)                | The URL of the QCOW2 image. You can specify local file with prefix 'file://'. |
+| qcow_url_client_cert | UNDEF               | Path to client certificate if needed for retrieving QCOW from authenticated site. |
 | qcow_url_client_key | UNDEF                | Path to client key if needed for retrieving QCOW from authenticated site. |
 | image_path         | /tmp/                 | Path where the QCOW2 image will be downloaded to. If directory the base name of the URL on the remote server will be used. |
 | image_checksum     | UNDEF                 | If a checksum is defined, the digest of the destination file will be calculated after it is downloaded to ensure its integrity and verify that the transfer completed successfully. Format: <algorithm>:<checksum>, e.g. checksum="sha256:D98291AC[...]B6DC7B97". |
@@ -102,6 +102,7 @@ Example Playbook
     engine_cafile: /etc/pki/ovirt-engine/ca.pem
 
     qcow_url: https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2
+    #qcow_url: file:///tmp/CentOS-7-x86_64-GenericCloud.qcow2
     template_cluster: production
     template_name: centos7_template
     template_memory: 4GiB
@@ -135,6 +136,39 @@ Example Playbook
 
   roles:
     - ovirt-image-template
+
+- name: Create a template from qcow2.xz
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  pre_tasks:
+    - name: Download qcow2.xz file
+      get_url:
+        url: "https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2.xz"
+        dest: /tmp
+      register: downloaded_file
+
+    - name: Extract downloaded QCOW image
+      command: "unxz --keep --force {{ downloaded_file.dest }}"
+
+    - name: Set qcow_url to extracted file
+      set_fact:
+        qcow_url: "file://{{ (downloaded_file.dest | splitext)[0] }}"
+  vars:
+    engine_fqdn: ovirt-engine.example.com
+    engine_user: admin@internal
+    engine_password: 123456
+    engine_cafile: /etc/pki/ovirt-engine/ca.pem
+
+    template_cluster: production
+    template_name: centos7_template
+    template_memory: 4GiB
+    template_cpu: 2
+    template_disk_size: 10GiB
+    template_disk_storage: mydata
+
+  roles:
+    - ovirt.image-template
 ```
 
 [![asciicast](https://asciinema.org/a/111478.png)](https://asciinema.org/a/111478)
