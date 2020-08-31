@@ -118,11 +118,7 @@
         args:
           creates: "{{ tmp_private_key_file }}"
         when: template_prerequisites_tasks is defined
-
-      - name: Get SSH key
-        command: "cat {{ tmp_private_key_file~'.pub' }}"
-        register: key_resp
-        when: template_prerequisites_tasks is defined
+        delegate_to: localhost
 
       - name: Create vm
         ovirt_vm:
@@ -137,7 +133,7 @@
           cpu_cores: "{{ template_cpu }}"
           operating_system: "{{ template_operating_system }}"
           type: "{{ template_type | default(omit) }}"
-          cloud_init: "{{ {'user_name': 'root', 'authorized_ssh_keys': key_resp.stdout } if template_prerequisites_tasks is defined else omit }}"
+          cloud_init: "{{ {'user_name': 'root', 'authorized_ssh_keys': lookup('file', tmp_private_key_file~'.pub') } if template_prerequisites_tasks is defined else omit }}"
           disks:
             - id: "{{ disk_info.ovirt_disks[0].id }}"
               bootable: true
@@ -186,6 +182,7 @@
           file:
             state: absent
             path: "{{ item }}"
+          delegate_to: localhost
           with_items:
             - "{{ tmp_private_key_file }}"
             - "{{ tmp_private_key_file }}.pub"
