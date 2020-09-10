@@ -1,6 +1,8 @@
 oVirt Image Template
 ====================
 
+## This role has been migrated to [oVirt Ansible Collection](https://github.com/ovirt/ovirt-ansible-collection), please use latest version from there. This repository is now readonly and no longer used for active development
+
 The `ovirt.image-template` role creates a template from external image. Currently the disk can be an image in Glance external provider or QCOW2 image.
 
 Note
